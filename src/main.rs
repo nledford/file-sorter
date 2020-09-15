@@ -82,6 +82,7 @@ fn build_new_path(entry: &DirEntry) -> Result<String> {
     Ok(new_path)
 }
 
+/// Converts a `NaiveDateTime` to a file path
 fn date_to_file_path(date: &NaiveDateTime) -> Result<String> {
     let year = date.format("%Y").to_string();
     let month = date.format("%m").to_string();
@@ -95,4 +96,19 @@ fn date_to_file_path(date: &NaiveDateTime) -> Result<String> {
         .to_string();
 
     Ok(file_path)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_date_to_file_path() {
+        let date = Local.ymd(1984, 4, 12).and_hms(0, 0, 0).naive_local();
+        let path = "1984/04/12".to_string();
+
+        let test_path = date_to_file_path(&date).unwrap();
+
+        assert_eq!(path, test_path);
+    }
 }
