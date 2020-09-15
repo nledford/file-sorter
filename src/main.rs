@@ -67,7 +67,11 @@ fn build_new_path(entry: &DirEntry) -> Result<String> {
     let date = convert_systemtime_to_naivedatetime(entry)?;
     let date_path = date_to_file_path(&date)?;
 
-    let new_path = entry.path().to_str().unwrap().replace(entry.path().file_name().unwrap().to_str().unwrap(), "");
+    let new_path = entry
+        .path()
+        .to_str()
+        .unwrap()
+        .replace(entry.path().file_name().unwrap().to_str().unwrap(), "");
     let new_path = Path::new(&new_path).join(date_path);
 
     fs::create_dir_all(&new_path)?;
@@ -83,7 +87,12 @@ fn date_to_file_path(date: &NaiveDateTime) -> Result<String> {
     let month = date.format("%m").to_string();
     let day = date.format("%d").to_string();
 
-    let file_path = Path::new(year.as_str()).join(month).join(day).to_str().unwrap().to_string();
+    let file_path = Path::new(year.as_str())
+        .join(month)
+        .join(day)
+        .to_str()
+        .unwrap()
+        .to_string();
 
     Ok(file_path)
 }
