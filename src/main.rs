@@ -7,15 +7,19 @@ use chrono::prelude::*;
 use clap::Clap;
 use walkdir::{DirEntry, WalkDir};
 
-use file_sorter::app::Opts;
+use file_sorter::app::{Opts, SubCommand};
 
 fn main() -> Result<()> {
     let opts = Opts::parse();
 
-    let dir: String = opts.dir;
-    println!("DIR:{}", &dir);
-
-    sort_dir(&dir)?;
+    match opts.subcmd {
+        SubCommand::Sort(sort) => {
+            sort_dir(&sort.dir)?;
+        }
+        SubCommand::Append(append) => {
+            append_dates(&append.dir)?;
+        }
+    }
 
     Ok(())
 }
@@ -96,6 +100,54 @@ fn date_to_file_path(date: &NaiveDateTime) -> Result<String> {
         .to_string();
 
     Ok(file_path)
+}
+
+fn append_dates(dir: &str) -> anyhow::Result<()> {
+    println!("Gathering files...");
+
+    let walker = WalkDir::new(dir).into_iter();
+    for entry in walker.filter_entry(|e| !is_hidden(e)) {
+        let entry = entry?;
+        let metadata = entry.metadata()?;
+
+        if metadata.is_dir() {
+            continue;
+        }
+
+        let path = entry.path().to_str().unwrap();
+        let file_name = entry.file_name().to_str().unwrap();
+
+        // Build date string
+        let date = metadata.created().unwrap();
+        let date: DateTime<Utc> = date.into();
+        let date = date.format("[%Y-%m-%d]").to_string();
+
+        // Build new file name
+        let new_file_name = format!("{} {}", date, file_name);
+        let after = path.replace(file_name, new_file_name.as_str());
+
+        // if file has already been renamed, skip it
+        if path.contains(&date) {
+            continue;
+        }
+
+        // Assume file has not been renamed
+
+        println!("BEFORE: {}", &path);
+        println!("AFTER: {}\n", after);
+
+        std::fs::rename(path, after)?;
+    }
+
+    Ok(())
+}
+
+fn is_hidden(entry: &DirEntry) -> bool {
+    entry
+        .file_name()
+        .to_str()
+        .map(|s| s.starts_with('.'))
+        .unwrap_or(false)
 }
 
 #[cfg(test)]
