@@ -1,4 +1,4 @@
-use std::fs;
+use std::{env, fs};
 use std::path::Path;
 use std::time::UNIX_EPOCH;
 
@@ -48,6 +48,19 @@ fn date_to_file_path(date: &NaiveDateTime) -> Result<String> {
         .to_string();
 
     Ok(file_path)
+}
+
+/// Extracts a directory if provided, otherwise returns the current working directory
+pub fn get_dir(dir: Option<String>) -> Result<String> {
+    let result = match dir {
+        Some(dir) => dir,
+        None => env::current_dir()?
+            .into_os_string()
+            .into_string()
+            .expect("Could not get current working directory"),
+    };
+
+    Ok(result)
 }
 
 pub fn is_hidden(entry: &DirEntry) -> bool {
