@@ -7,7 +7,7 @@ use chrono::prelude::*;
 use clap::Clap;
 use walkdir::{DirEntry, WalkDir};
 
-use file_sorter::app::{Opts, SubCommand};
+use file_sorter::cli::{Opts, SubCommand};
 
 fn main() -> Result<()> {
     let opts = Opts::parse();
