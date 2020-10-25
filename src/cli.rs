@@ -15,10 +15,10 @@ pub enum SubCommand {
 
 #[derive(Clap)]
 pub struct Sort {
-    pub dir: String,
+    pub dir: Option<String>,
 }
 
 #[derive(Clap)]
 pub struct Append {
-    pub dir: String,
+    pub dir: Option<String>,
 }

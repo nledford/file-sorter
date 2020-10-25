@@ -1,4 +1,4 @@
-use std::fs;
+use std::{env, fs};
 
 use anyhow::Result;
 use chrono::prelude::*;
@@ -13,10 +13,26 @@ fn main() -> Result<()> {
 
     match opts.subcmd {
         SubCommand::Sort(sort) => {
-            sort_dir(&sort.dir)?;
+            let dir = match sort.dir {
+                Some(dir) => dir,
+                None => env::current_dir()?
+                    .into_os_string()
+                    .into_string()
+                    .expect("Could not get current working directory"),
+            };
+
+            sort_dir(&dir)?;
         }
         SubCommand::Append(append) => {
-            append_dates(&append.dir)?;
+            let dir = match append.dir {
+                Some(dir) => dir,
+                None => env::current_dir()?
+                    .into_os_string()
+                    .into_string()
+                    .expect("Could not get current working directory"),
+            };
+
+            append_dates(&dir)?;
         }
     }
 
