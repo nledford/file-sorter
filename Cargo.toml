@@ -1,5 +1,5 @@
 [package]
-name = "image-sorter"
+name = "file-sorter"
 version = "0.1.1"
 authors = [ "Nathaniel Ledford <nate@nateledford.com>" ]
 edition = "2018"

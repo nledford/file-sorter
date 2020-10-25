@@ -7,7 +7,7 @@ use chrono::prelude::*;
 use clap::Clap;
 use walkdir::{DirEntry, WalkDir};
 
-use image_sorter::app::Opts;
+use file_sorter::app::Opts;
 
 fn main() -> Result<()> {
     let opts = Opts::parse();
