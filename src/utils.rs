@@ -1,12 +1,10 @@
-use std::{env, fs};
+use std::{env, fs, time};
 use std::path::{Path, PathBuf};
 use std::time::{UNIX_EPOCH};
 
 use anyhow::Result;
 use chrono::prelude::*;
 use walkdir::DirEntry;
-use std::ops::Sub;
-use rand::Rng;
 
 const SECONDS_IN_DAY: i64 = 86400;
 
@@ -75,8 +73,7 @@ pub fn is_hidden(entry: &DirEntry) -> bool {
         .unwrap_or(false)
 }
 
-pub fn generate_random_dated_folder_path() -> PathBuf {
-    use rand::Rng;
+pub fn generate_random_dated_folder_path() -> Result<PathBuf> {
     use rand::distributions::{Distribution, Uniform};
 
     let mut rng = rand::thread_rng();
@@ -89,7 +86,10 @@ pub fn generate_random_dated_folder_path() -> PathBuf {
     let range = ceiling.signed_duration_since(floor.date()).num_days() + 1;
     let range = Uniform::from(0..range);
 
-    let date = floor.checked_add_signed(chrono::Duration::from_secs((range.sample(&mut rng) * SECONDS_IN_DAY) as u64)).expect("Error occurred while attempting to generate random date");
+    let duration = time::Duration::from_secs((range.sample(&mut rng) * SECONDS_IN_DAY) as u64);
+    let duration = chrono::Duration::from_std(duration)?;
+
+    let date = floor.checked_add_signed(duration).expect("Error occurred while attempting to generate random date");
 
     let year = &date.format("%Y").to_string();
     let month = &date.format("%m").to_string();
@@ -99,5 +99,5 @@ pub fn generate_random_dated_folder_path() -> PathBuf {
     let path = path.join(month);
     let path = path.join(day);
 
-    path
+    Ok(path)
 }
