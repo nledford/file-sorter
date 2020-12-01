@@ -21,4 +21,7 @@ pub struct Sort {
 #[derive(Clap)]
 pub struct Append {
     pub dir: Option<String>,
+    // Append randomly generated dates rather than the date from the file itself
+    #[clap(long, takes_value = false)]
+    pub random_dates: bool,
 }
