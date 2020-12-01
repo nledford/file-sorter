@@ -1,10 +1,14 @@
 use std::{env, fs};
-use std::path::Path;
-use std::time::UNIX_EPOCH;
+use std::path::{Path, PathBuf};
+use std::time::{UNIX_EPOCH};
 
 use anyhow::Result;
-use chrono::NaiveDateTime;
+use chrono::prelude::*;
 use walkdir::DirEntry;
+use std::ops::Sub;
+use rand::Rng;
+
+const SECONDS_IN_DAY: i64 = 86400;
 
 pub fn build_new_path(entry: &DirEntry) -> Result<String> {
     let date = convert_systemtime_to_naivedatetime(entry)?;
@@ -69,4 +73,31 @@ pub fn is_hidden(entry: &DirEntry) -> bool {
         .to_str()
         .map(|s| s.starts_with('.'))
         .unwrap_or(false)
+}
+
+pub fn generate_random_dated_folder_path() -> PathBuf {
+    use rand::Rng;
+    use rand::distributions::{Distribution, Uniform};
+
+    let mut rng = rand::thread_rng();
+
+    let floor = Local.ymd(2010, 1, 1).and_hms(0, 0 , 0);
+
+    let ceiling_year = Local::now().year();
+    let ceiling = Local.ymd(ceiling_year, 12, 31);
+
+    let range = ceiling.signed_duration_since(floor.date()).num_days() + 1;
+    let range = Uniform::from(0..range);
+
+    let date = floor.checked_add_signed(chrono::Duration::from_secs((range.sample(&mut rng) * SECONDS_IN_DAY) as u64)).expect("Error occurred while attempting to generate random date");
+
+    let year = &date.format("%Y").to_string();
+    let month = &date.format("%m").to_string();
+    let day = &date.format("%d").to_string();
+
+    let path = Path::new(year);
+    let path = path.join(month);
+    let path = path.join(day);
+
+    path
 }
