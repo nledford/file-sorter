@@ -1,6 +1,6 @@
-use std::{env, fs, time};
 use std::path::{Path, PathBuf};
-use std::time::{UNIX_EPOCH};
+use std::time::UNIX_EPOCH;
+use std::{env, fs, time};
 
 use anyhow::Result;
 use chrono::prelude::*;
@@ -78,7 +78,7 @@ pub fn generate_random_dated_folder_path() -> Result<PathBuf> {
 
     let mut rng = rand::thread_rng();
 
-    let floor = Local.ymd(2010, 1, 1).and_hms(0, 0 , 0);
+    let floor = Local.ymd(2010, 1, 1).and_hms(0, 0, 0);
 
     let ceiling_year = Local::now().year();
     let ceiling = Local.ymd(ceiling_year, 12, 31);
@@ -89,7 +89,9 @@ pub fn generate_random_dated_folder_path() -> Result<PathBuf> {
     let duration = time::Duration::from_secs((range.sample(&mut rng) * SECONDS_IN_DAY) as u64);
     let duration = chrono::Duration::from_std(duration)?;
 
-    let date = floor.checked_add_signed(duration).expect("Error occurred while attempting to generate random date");
+    let date = floor
+        .checked_add_signed(duration)
+        .expect("Error occurred while attempting to generate random date");
 
     let year = &date.format("%Y").to_string();
     let month = &date.format("%m").to_string();
