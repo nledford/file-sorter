@@ -39,7 +39,8 @@ fn convert_systemtime_to_naivedatetime(entry: &DirEntry) -> Result<NaiveDateTime
 /// Converts a `NaiveDateTime` to a file path
 fn date_to_file_path(date: &NaiveDateTime) -> Result<String> {
     let year = date.format("%Y").to_string();
-    let month = date.format("%m").to_string();
+    // e.g., 01-Jan, 02-Feb
+    let month = date.format("%m-%b").to_string();
     let day = date.format("%d").to_string();
 
     let file_path = Path::new(year.as_str())
@@ -93,14 +94,7 @@ pub fn generate_random_dated_folder_path() -> Result<PathBuf> {
         .checked_add_signed(duration)
         .expect("Error occurred while attempting to generate random date");
 
-    let year = &date.format("%Y").to_string();
-    // e.g., 01-Jan
-    let month = &date.format("%m-%b").to_string();
-    let day = &date.format("%d").to_string();
+    let path = date_to_file_path(&date.naive_local())?;
 
-    let path = Path::new(year);
-    let path = path.join(month);
-    let path = path.join(day);
-
-    Ok(path)
+    Ok(Path::new(&path).to_path_buf())
 }
