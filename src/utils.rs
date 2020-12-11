@@ -94,7 +94,8 @@ pub fn generate_random_dated_folder_path() -> Result<PathBuf> {
         .expect("Error occurred while attempting to generate random date");
 
     let year = &date.format("%Y").to_string();
-    let month = &date.format("%m").to_string();
+    // e.g., 01-Jan
+    let month = &date.format("%m-%b").to_string();
     let day = &date.format("%d").to_string();
 
     let path = Path::new(year);
