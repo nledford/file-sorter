@@ -1,12 +1,12 @@
 [package]
 name = "file-sorter"
-version = "1.1.16"
+version = "1.1.17"
 authors = [ "Nathaniel Ledford <nate@nateledford.com>" ]
 edition = "2018"
 
 [dependencies]
-anyhow = "1.0.40"
+anyhow = "1.0.42"
 chrono = "0.4.19"
 clap = "3.0.0-beta.2"
-rand = "0.8.3"
+rand = "0.8.4"
 walkdir = "2.3.2"
