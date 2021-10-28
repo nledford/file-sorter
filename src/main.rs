@@ -2,7 +2,7 @@ use std::fs;
 
 use anyhow::Result;
 use chrono::prelude::*;
-use clap::Clap;
+use clap::Parser;
 use walkdir::WalkDir;
 
 use file_sorter::cli::{Opts, SubCommand};
